@@ -41,7 +41,7 @@ void ofxBox2d::init() {
 	//worldAABB.lowerBound.Set(-100.0f, -100.0f);
 	//worldAABB.upperBound.Set(100.0f, 100.0f);
 	
-	world = new b2World(b2Vec2(gravity.x, gravity.y), doSleep);
+	world = new b2World(b2Vec2(gravity.x, gravity.y));
 	world->SetDebugDraw(&debugRender);
 	
 	
@@ -98,7 +98,7 @@ void ofxBox2d::mouseDragged(ofMouseEventArgs &e) {
 void ofxBox2d::mouseReleased(ofMouseEventArgs &e) {
 	grabShapeUp(e.x, e.y);
 }
-#endif;
+#endif
 
 // ------------------------------------------------------ 
 void ofxBox2d::grabShapeDown(float x, float y) {
@@ -183,9 +183,16 @@ void ofxBox2d::createGround(float x1, float y1, float x2, float y2) {
 	b2BodyDef bd;
 	ground = world->CreateBody(&bd);
 	
-	b2PolygonShape shape;
-	shape.SetAsEdge(b2Vec2(x1/OFX_BOX2D_SCALE, y1/OFX_BOX2D_SCALE), b2Vec2(x2/OFX_BOX2D_SCALE, y2/OFX_BOX2D_SCALE));
-	ground->CreateFixture(&shape, 0.0f);
+	b2ChainShape groundShape;
+
+	b2Vec2 verts[2] = {
+		b2Vec2(x1/OFX_BOX2D_SCALE, y1/OFX_BOX2D_SCALE),
+		b2Vec2(x2/OFX_BOX2D_SCALE, y2/OFX_BOX2D_SCALE)
+	};
+	
+	groundShape.CreateChain(verts, 2);
+	
+	ground->CreateFixture(&groundShape, 0.0f);
 
 }
 // ------------------------------------------------------ create Ground
@@ -207,26 +214,37 @@ void ofxBox2d::createBounds(float x, float y, float w, float h) {
 	bd.position.Set(0, 0);
 	ground = world->CreateBody(&bd);	
 	
-	b2PolygonShape shape;
-	
 	ofRectangle rec(x/OFX_BOX2D_SCALE, y/OFX_BOX2D_SCALE, w/OFX_BOX2D_SCALE, h/OFX_BOX2D_SCALE);
 	
+	b2ChainShape b2Wall;
 	
 	//right wall
-	shape.SetAsEdge(b2Vec2(rec.x+rec.width, rec.y), b2Vec2(rec.x+rec.width, rec.y+rec.height));
-	ground->CreateFixture(&shape, 0.0f);
+	b2Vec2 wallVerts[2] = {	b2Vec2(rec.x+rec.width, rec.y), 
+							b2Vec2(rec.x+rec.width, rec.y+rec.height)
+					};
+	
+	b2Wall.CreateChain(wallVerts, 2);
+	ground->CreateFixture(&b2Wall, 0.0f);
 	
 	//left wall
-	shape.SetAsEdge(b2Vec2(rec.x, rec.y), b2Vec2(rec.x, rec.y+rec.height));
-	ground->CreateFixture(&shape, 0.0f);
+	wallVerts[0] = b2Vec2(rec.x, rec.y);
+	wallVerts[1] = b2Vec2(rec.x, rec.y+rec.height);
+	
+	b2Wall.CreateChain(wallVerts, 2);
+	ground->CreateFixture(&b2Wall, 0.0f);
 	
 	// top wall
-	shape.SetAsEdge(b2Vec2(rec.x, rec.y), b2Vec2(rec.x+rec.width, rec.y));
-	ground->CreateFixture(&shape, 0.0f);
+	wallVerts[0] = b2Vec2(rec.x, rec.y);
+	wallVerts[1] = b2Vec2(rec.x+rec.width, rec.y);
+	b2Wall.CreateChain(wallVerts, 2);
+	ground->CreateFixture(&b2Wall, 0.0f);
 	
 	// bottom wall
-	shape.SetAsEdge(b2Vec2(rec.x, rec.y+rec.height), b2Vec2(rec.x+rec.width, rec.y+rec.height));
-	ground->CreateFixture(&shape, 0.0f);
+	wallVerts[0] = b2Vec2(rec.x, rec.y+rec.height);
+	wallVerts[1] = b2Vec2(rec.x+rec.width, rec.y+rec.height);
+	
+	b2Wall.CreateChain(wallVerts, 2);
+	ground->CreateFixture(&b2Wall, 0.0f);
 	
 }
 

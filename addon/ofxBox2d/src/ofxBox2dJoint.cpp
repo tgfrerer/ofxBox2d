@@ -44,7 +44,7 @@ void ofxBox2dJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, b2Vec2
 	jointDef.collideConnected	= bCollideConnected;
 	jointDef.frequencyHz		= frequencyHz;
 	jointDef.dampingRatio		= damping;	
-	joint						= (b2DistanceJoint*)world->CreateJoint(&jointDef);
+	joint						= static_cast<b2DistanceJoint*>(world->CreateJoint(&jointDef));
 	
 	alive						= true;
 }

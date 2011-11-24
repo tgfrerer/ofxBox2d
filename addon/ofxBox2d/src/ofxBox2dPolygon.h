@@ -10,7 +10,6 @@ private:
 	
 	bool	bIsSimplified;
 	bool    bIsTriangulated;
-	bool	bSetAsEdge;
 	
 	float   area;
 	ofVec2f center;
@@ -45,7 +44,6 @@ public:
 	ofVec2f getCenter();
 	float   getArea()     { return area; };
 	bool	isGoodShape() { return calculateArea() > 15; }
-	void	setAsEdge(bool set) { bSetAsEdge = set; }
 	//------------------------------------------------
 	void addAttractionPoint(ofVec2f pt, float amt=1);
 	void addAttractionPoint(float x, float y, float amt=1);
