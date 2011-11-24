@@ -8,17 +8,18 @@ void testApp::setup() {
 	ofSetLogLevel(OF_LOG_NOTICE);
 
 	box2d.init();
-	box2d.setGravity(10, 0);
+	box2d.setGravity(0, 10);
 	box2d.setFPS(30.0);
 	box2d.registerGrabbing();
 	
-	anchor.setup(box2d.getWorld(), 20, ofGetHeight()/2, 4);
+	anchor.setup(box2d.getWorld(), 200, ofGetHeight()/2, 4);
+	anchor2.setup(box2d.getWorld(), 200+100, ofGetHeight()/2, 4);
 	
 	// first we add just a few circles
 	for (int i=0; i<3; i++) {
 		ofxBox2dCircle circle;
 		circle.setPhysics(3.0, 0.53, 0.1);
-		circle.setup(box2d.getWorld(), ofGetWidth()/2, 100+(i*20), 8);
+		circle.setup(box2d.getWorld(), ofGetWidth()/2, 100+(i*20), 10);
 		circles.push_back(circle);
 	}
 	
@@ -38,6 +39,12 @@ void testApp::setup() {
 		joint.setLength(25);
 		joints.push_back(joint);
 	}
+	
+	ofxBox2dJoint lastJoint;
+	lastJoint.setup(box2d.getWorld(), circles.back().body, anchor2.body);
+	lastJoint.setLength(25);
+	joints.push_back(lastJoint);
+	
 }
 
 //--------------------------------------------------------------
@@ -51,6 +58,7 @@ void testApp::draw() {
 	
 	ofSetHexColor(0xf2ab01);
 	anchor.draw();
+	anchor2.draw();
 	
 	for(int i=0; i<circles.size(); i++) {
 		ofFill();
@@ -79,7 +87,7 @@ void testApp::keyPressed(int key) {
 		// add a new circle
 		ofxBox2dCircle circle;
 		circle.setPhysics(3.0, 0.53, 0.1);
-		circle.setup(box2d.getWorld(), circles.back().getPosition().x+ofRandom(-30, 30), circles.back().getPosition().y-30, 8);
+		circle.setup(box2d.getWorld(), circles.back().getPosition().x+ofRandom(-30, 30), circles.back().getPosition().y-30, 10);
 		circles.push_back(circle);
 	
 		// get this cirlce and the prev cirlce
